@@ -1,0 +1,450 @@
+version: '0.1'
+metrics:
+  total_population:
+    source_fact: population_summary
+    meaning: registered resident population
+    unit: persons
+    aggregation: additive
+    allowed_operations: &id001
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    status: normal
+    display_enabled: true
+    claims:
+      supports:
+      - population size
+      - population change
+      - geographic population comparison
+      does_not_support:
+      - cause of population change
+      - daytime population
+  households:
+    source_fact: population_summary
+    meaning: registered household count
+    unit: households
+    aggregation: additive
+    allowed_operations: *id001
+    status: normal
+    display_enabled: true
+    claims:
+      supports: []
+      does_not_support: []
+  age_group_population:
+    source_fact: population_age
+    meaning: registered resident population in a selected age range
+    unit: persons
+    aggregation: additive
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    parameters:
+      age_range: controlled_age_range
+    claims:
+      supports: []
+      does_not_support: []
+  age_group_share:
+    source_fact: population_age
+    meaning: share of registered resident population in a selected age range
+    unit: percent
+    aggregation: recompute_from_components
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    change_unit: percentage_point
+    parameters:
+      age_range: controlled_age_range
+    formula: SUM(population in age_range) / SUM(population)
+    claims:
+      supports: []
+      does_not_support: []
+  child_share:
+    source_fact: population_age
+    meaning: share aged 0-14
+    unit: percent
+    aggregation: recompute_from_components
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    status: normal
+    display_enabled: true
+    change_unit: percentage_point
+    parameters:
+      fixed_age_range: 0-14
+    formula: age_group_population(fixed_age_range) / total population
+    claims:
+      supports: []
+      does_not_support:
+      - cause of demographic structure
+  working_age_share:
+    source_fact: population_age
+    meaning: share aged 15-64
+    unit: percent
+    aggregation: recompute_from_components
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    status: normal
+    display_enabled: true
+    change_unit: percentage_point
+    parameters:
+      fixed_age_range: 15-64
+    formula: age_group_population(fixed_age_range) / total population
+    claims:
+      supports: []
+      does_not_support:
+      - cause of demographic structure
+  aging_share:
+    source_fact: population_age
+    meaning: share aged 65 or older
+    unit: percent
+    aggregation: recompute_from_components
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - decompose
+    status: normal
+    display_enabled: true
+    change_unit: percentage_point
+    parameters:
+      fixed_age_range: 65+
+    formula: age_group_population(fixed_age_range) / total population
+    claims:
+      supports: []
+      does_not_support:
+      - cause of demographic structure
+  aging_speed:
+    source_fact: population_age
+    meaning: change in aging_share between two periods
+    unit: percentage_point
+    aggregation: derived
+    allowed_operations:
+    - rank
+    - compare
+    status: normal
+    display_enabled: true
+    parameters:
+      start_period: required
+      end_period: required
+    formula: aging_share(end) - aging_share(start)
+    claims:
+      supports: []
+      does_not_support:
+      - cause of aging
+  marital_population:
+    source_fact: marital_population
+    meaning: resident population in selected marital-status categories
+    unit: persons
+    aggregation: additive
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    parameters:
+      marital_status: controlled_category
+      sex: optional
+      age_band: optional
+      education: optional
+    claims:
+      supports: []
+      does_not_support: []
+  marital_status_share:
+    source_fact: marital_population
+    meaning: share in selected marital-status categories within the same filtered
+      population
+    unit: percent
+    aggregation: recompute_from_components
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    change_unit: percentage_point
+    parameters:
+      marital_status: controlled_category
+    formula: matching marital population / total population under same geography,
+      year, sex, age and education filters
+    claims:
+      supports: []
+      does_not_support:
+      - incidence rate
+      - future probability
+  unmarried_share:
+    source_fact: marital_population
+    meaning: share currently unmarried
+    unit: percent
+    aggregation: recompute_from_components
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    change_unit: percentage_point
+    parameters:
+      fixed_marital_status:
+      - 未婚
+    claims:
+      supports: []
+      does_not_support:
+      - marriage propensity
+      - divorce incidence
+      - divorce risk
+      - causal explanation
+  partnered_share:
+    source_fact: marital_population
+    meaning: share currently partnered
+    unit: percent
+    aggregation: recompute_from_components
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    change_unit: percentage_point
+    parameters:
+      fixed_marital_status:
+      - 有偶_不同性別
+      - 有偶_相同性別
+    claims:
+      supports: []
+      does_not_support:
+      - marriage propensity
+      - divorce incidence
+      - divorce risk
+      - causal explanation
+  divorced_stock_share:
+    source_fact: marital_population
+    meaning: share currently classified as divorced
+    unit: percent
+    aggregation: recompute_from_components
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    change_unit: percentage_point
+    parameters:
+      fixed_marital_status:
+      - 離婚_不同性別
+      - 離婚_相同性別
+    claims:
+      supports: []
+      does_not_support:
+      - marriage propensity
+      - divorce incidence
+      - divorce risk
+      - causal explanation
+  marriage_person_count:
+    source_fact: marriage_activity
+    meaning: number of persons marrying during the period, by occurrence date
+    unit: persons
+    aggregation: additive
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    claims:
+      supports: []
+      does_not_support:
+      - marriage pair count
+      - number of couples
+      - marriage rate
+  marriage_person_share:
+    source_fact: marriage_activity
+    meaning: share of marriage persons in a selected category within the same analysis
+      population
+    unit: percent
+    aggregation: recompute_from_components
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    change_unit: percentage_point
+    formula: matching marriage_person_count / all marriage_person_count under same
+      context
+    claims:
+      supports: []
+      does_not_support:
+      - population marriage rate
+      - marriage propensity
+  same_sex_marriage_person_share:
+    source_fact: marriage_activity
+    meaning: share of marriage persons classified as same-sex marriage activity
+    unit: percent
+    aggregation: recompute_from_components
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    change_unit: percentage_point
+    parameters:
+      fixed_marriage_type: 相同性別
+    claims:
+      supports: []
+      does_not_support:
+      - same-sex population marriage rate
+      - acceptance
+      - propensity
+  migration_flow_count:
+    source_fact: migration_flow
+    meaning: registered migration persons from origin to destination
+    unit: persons
+    aggregation: additive
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    parameters:
+      origin: required
+      destination: optional_county
+      sex: optional
+    claims:
+      supports: []
+      does_not_support:
+      - actual residential moves
+      - age-specific migration
+  migration_destination_share:
+    source_fact: migration_flow
+    meaning: share of an origin population flow going to a selected destination county
+    unit: percent
+    aggregation: recompute_from_components
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    change_unit: percentage_point
+    formula: flow(origin,destination) / flow(origin,all destinations)
+    claims:
+      supports: []
+      does_not_support:
+      - destination district share
+      - actual residential move share
+  total_fertility_rate:
+    source_fact: fertility
+    meaning: total fertility rate (TFR)
+    unit: births_per_woman
+    aggregation: non_additive
+    allowed_operations: *id001
+    status: normal
+    display_enabled: true
+    claims:
+      supports: []
+      does_not_support:
+      - summed regional rate
+      - arbitrary averaged regional rate
+      - causal explanation
+    source_unit: per_thousand
+    display_conversion: raw / 1000
+  general_fertility_rate:
+    source_fact: fertility
+    meaning: general fertility rate (GFR)
+    unit: per_thousand
+    aggregation: non_additive
+    allowed_operations: *id001
+    status: normal
+    display_enabled: true
+    claims:
+      supports: []
+      does_not_support:
+      - summed regional rate
+      - arbitrary averaged regional rate
+      - causal explanation
+  age_specific_fertility_rate:
+    source_fact: fertility
+    meaning: age-specific fertility rate (ASFR)
+    unit: per_thousand
+    aggregation: non_additive
+    allowed_operations:
+    - snapshot
+    - rank
+    - trend
+    - change
+    - compare
+    - profile
+    status: normal
+    display_enabled: true
+    parameters:
+      age_band:
+      - 15-19
+      - 20-24
+      - 25-29
+      - 30-34
+      - 35-39
+      - 40-44
+      - 45-49
+    claims:
+      supports: []
+      does_not_support:
+      - single-age fertility rate
+      - summed age-band rate
+      - preference
+      - biological fertility

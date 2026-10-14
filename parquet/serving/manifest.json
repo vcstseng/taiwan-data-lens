@@ -1,0 +1,14 @@
+{
+  "version": "0.1",
+  "derived_from_facts": true,
+  "tables": {
+    "population_site_monthly": {
+      "path": "parquet\\serving\\population_site_monthly.parquet",
+      "rows": 1583662
+    },
+    "marital_site_annual": {
+      "path": "parquet\\serving\\marital_site_annual.parquet",
+      "rows": 650972
+    }
+  }
+}

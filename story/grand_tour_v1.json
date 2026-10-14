@@ -1,0 +1,52 @@
+{
+  "id": "taiwan_rearranging",
+  "version": "1.0",
+  "title": "台灣正在重新排列",
+  "narrative_status": "curated_evidence_entrypoints",
+  "rule": "Narrative frame only; stops do not imply causal links to one another.",
+  "stops": [
+    {
+      "id": "population_redistribution",
+      "title": "台灣人口不是一起變少，而是在重新分布",
+      "capabilities": [
+        "population_level"
+      ]
+    },
+    {
+      "id": "aging_divergence",
+      "title": "台灣都在變老，但不是用同一種方式變老",
+      "capabilities": [
+        "age_structure",
+        "aging_change"
+      ]
+    },
+    {
+      "id": "migration_networks",
+      "title": "搬離一個地方的人，並不是平均散到全台灣",
+      "capabilities": [
+        "migration_flow"
+      ]
+    },
+    {
+      "id": "marital_geography",
+      "title": "台灣各地的婚姻狀態，比想像中更不一樣",
+      "capabilities": [
+        "marital_status"
+      ]
+    },
+    {
+      "id": "same_sex_marriage_geography",
+      "title": "同性婚姻占比最高的地方，不是你第一個會猜的台北",
+      "capabilities": [
+        "marriage_activity"
+      ]
+    },
+    {
+      "id": "fertility_geography",
+      "title": "低生育是共同背景，但地方差異可以非常大",
+      "capabilities": [
+        "fertility_level"
+      ]
+    }
+  ]
+}

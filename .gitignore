@@ -1,0 +1,22 @@
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local files
+*.log
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/

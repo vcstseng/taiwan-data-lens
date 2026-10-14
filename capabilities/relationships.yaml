@@ -1,0 +1,95 @@
+version: '0.1'
+relationship_types:
+  same_fact: metrics share a source fact; arithmetic still requires metric authorization
+  cross_fact_direct: cross-fact compatibility backed by explicit reconciliation
+  contextual_evidence: may be investigated together when aligned; grants no causal
+    authority
+relationships:
+- id: population_age_summary
+  left:
+  - age_group_population
+  - age_group_share
+  - aging_share
+  right:
+  - total_population
+  type: cross_fact_direct
+  conditions:
+  - same_period
+  - same_geography
+  evidence: ODRP014 population-age to summary reconciliation verified
+  execution_enabled: true
+- id: population_migration
+  left:
+  - total_population
+  - age_group_population
+  - aging_share
+  right:
+  - migration_flow_count
+  type: contextual_evidence
+  conditions:
+  - compatible_period
+  - compatible_geography
+  does_not_support:
+  - causal attribution
+  - age-specific migration
+  - youth outmigration
+  - migration-caused aging
+  execution_enabled: true
+- id: population_marital
+  left:
+  - total_population
+  - age_group_population
+  right:
+  - unmarried_share
+  - partnered_share
+  - divorced_stock_share
+  type: contextual_evidence
+  conditions:
+  - explicit_temporal_alignment_policy
+  - compatible_geography
+  execution_enabled: false
+- id: marital_marriage_activity
+  left:
+  - unmarried_share
+  - partnered_share
+  right:
+  - marriage_person_count
+  type: contextual_evidence
+  conditions:
+  - same_year
+  - compatible_geography
+  does_not_support:
+  - stock-flow identity
+  - causal attribution
+  execution_enabled: true
+- id: marriage_fertility
+  left:
+  - marriage_person_count
+  - marriage_person_share
+  right:
+  - total_fertility_rate
+  - general_fertility_rate
+  - age_specific_fertility_rate
+  type: contextual_evidence
+  conditions:
+  - same_year
+  - compatible_geography
+  does_not_support:
+  - causal attribution
+  - individual reproductive behavior
+  execution_enabled: true
+- id: marital_fertility
+  left:
+  - unmarried_share
+  - partnered_share
+  right:
+  - total_fertility_rate
+  - general_fertility_rate
+  type: contextual_evidence
+  conditions:
+  - same_year
+  - compatible_geography
+  does_not_support:
+  - causal attribution
+  - individual reproductive behavior
+  execution_enabled: true

@@ -1,0 +1,169 @@
+version: '0.1'
+facts:
+  population_age:
+    source_dataset: ODRP014
+    grain:
+    - month
+    - village
+    - sex
+    - single_age
+    dimensions:
+      time: month
+      geography:
+        finest: village
+      sex: true
+      age:
+        type: single_age
+        max_bucket: 100+
+    measures:
+      population:
+        type: count
+        unit: persons
+        aggregation: additive
+    status: verified
+  population_summary:
+    source_dataset: ODRP014
+    grain:
+    - month
+    - village
+    dimensions:
+      time: month
+      geography:
+        finest: village
+    measures:
+      households:
+        type: count
+        unit: households
+        aggregation: additive
+      population_male:
+        type: count
+        unit: persons
+        aggregation: additive
+      population_female:
+        type: count
+        unit: persons
+        aggregation: additive
+      population_total:
+        type: count
+        unit: persons
+        aggregation: additive
+    status: verified
+    reconciles_with: population_age
+  marital_population:
+    source_dataset: ODRP053
+    grain:
+    - year
+    - village
+    - sex
+    - age_band
+    - marital_status
+    - education
+    dimensions:
+      time: year
+      geography:
+        finest: village
+      sex: true
+      age_band: true
+      marital_status: true
+      education: true
+    measures:
+      population:
+        type: count
+        unit: persons
+        aggregation: additive
+    semantics:
+      kind: stock
+      population_scope: age_15_plus
+    status: profiled
+  marriage_activity:
+    source_dataset: ODRP069
+    grain:
+    - year
+    - site_id
+    - marriage_type
+    - sex
+    - nationality
+    - education
+    - age_band
+    dimensions:
+      time: year
+      geography:
+        field: site_id
+      marriage_type: true
+      sex: true
+      nationality: true
+      education: true
+      age_band: true
+    measures:
+      marriage_count:
+        type: count
+        unit: persons
+        aggregation: additive
+    semantics:
+      kind: activity
+      count_unit: persons
+      according: 按發生日期分
+    status: profiled
+  migration_flow:
+    source_dataset: ODRP094
+    grain:
+    - month
+    - origin_village
+    - destination_county
+    - sex
+    dimensions:
+      time: month
+      origin_geography:
+        finest: village
+      destination_geography:
+        finest: county
+      sex: true
+    measures:
+      migrant_count:
+        type: count
+        unit: persons
+        aggregation: additive
+    semantics:
+      kind: flow
+      direction: origin_to_destination
+      population_concept: registered_migration
+    status: profiled
+  fertility:
+    source_dataset: ODRP116
+    grain:
+    - year
+    - site_id
+    dimensions:
+      time: year
+      geography:
+        field: site_id
+      age_band:
+        values:
+        - 15-19
+        - 20-24
+        - 25-29
+        - 30-34
+        - 35-39
+        - 40-44
+        - 45-49
+    measures:
+      general_fertility_rate:
+        type: rate
+        aggregation: non_additive
+        unit: per_thousand
+      total_fertility_rate:
+        type: rate
+        aggregation: non_additive
+        unit: source_per_thousand; display_births_per_woman
+      age_specific_fertility_rate:
+        type: rate
+        aggregation: non_additive
+        unit: per_thousand
+    status: verified
+    display_enabled: true
+    semantics:
+      kind: rate
+      according: 按發生日期分
+      source_scale: per_thousand
+      tfr_display_conversion: raw / 1000
+      tfr_reconciliation: 5 * sum(age_specific_fertility_rate)

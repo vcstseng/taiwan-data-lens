@@ -1,0 +1,40 @@
+version: '0.1'
+constraints:
+  C01:
+    name: unsupported_metric_substitution
+    rule: Do not silently replace an unsupported requested metric with a similar supported metric. Reframe
+      explicitly.
+  C02:
+    name: unsupported_dimension_inference
+    rule: Do not infer or synthesize dimensions absent from the source fact.
+  C03:
+    name: unauthorized_aggregation
+    rule: Aggregation must follow metric contract. Shares recompute from components; fertility rates are
+      non-additive.
+  C04:
+    name: temporal_alignment
+    rule: Monthly and annual facts require an explicit temporal alignment policy; until defined, cross-frequency
+      execution is blocked.
+  C05:
+    name: geographic_compatibility
+    rule: Comparisons and relationships require compatible geography. Migration destination resolution
+      is county only.
+  C06:
+    name: stock_flow_rate_separation
+    rule: Stock, activity/flow, rate, and population snapshot concepts are not interchangeable.
+  C07:
+    name: no_causal_overclaim
+    rule: Observed co-movement does not authorize causal language. causal_authority is none.
+  C08:
+    name: unresolved_evidence
+    rule: Unresolved semantics or units remain unresolved and must not be guessed or displayed as resolved.
+  C09:
+    name: no_synthetic_evidence
+    rule: Do not manufacture observations through unauthorized assumptions such as age-band midpoints,
+      annual/12, persons/2, proxy rates, or regional-rate averaging.
+outcomes:
+- ACCEPT
+- REFRAME
+- INVESTIGATE_WITH_LIMITS
+- REJECT
+- BLOCK

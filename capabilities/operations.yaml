@@ -1,0 +1,18 @@
+version: '0.1'
+operations:
+  snapshot: Return a metric for a specified compatible context.
+  rank: Rank comparable entities by the same metric and context.
+  trend: Observe the same metric across comparable periods.
+  change: Compare the same metric between two comparable periods.
+  compare: Compare the same metric across compatible entities.
+  profile: Observe a metric across one supported dimension.
+  decompose: Break an observation or change into supported components without causal attribution.
+not_operations:
+- sum
+- average
+- join
+- correlate
+- explain_cause
+- predict
+- forecast
+- generate_sql

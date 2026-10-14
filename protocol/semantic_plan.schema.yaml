@@ -1,0 +1,50 @@
+version: "0.1"
+semantic_plan:
+  required:
+    - operation
+    - metric
+  allowed_fields:
+    - operation
+    - metric
+    - scope
+    - period
+    - start_period
+    - end_period
+    - filters
+    - parameters
+    - profile_dimension
+    - order
+    - limit
+    - requested_claim
+  forbidden_fields:
+    - sql
+    - query
+    - formula
+    - join
+    - group_by
+    - aggregation
+    - expression
+    - where
+  enums:
+    order:
+      - ascending
+      - descending
+  operation_requirements:
+    snapshot:
+      time: period
+    rank:
+      time: period
+    trend:
+      time: range
+    change:
+      time: range
+    compare:
+      time: period
+    profile:
+      time: period
+      requires:
+        - profile_dimension
+    decompose:
+      time: range
+      requires:
+        - profile_dimension

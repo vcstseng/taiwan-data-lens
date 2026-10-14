@@ -1,0 +1,166 @@
+version: '0.1'
+registry_contract:
+  purpose: Guide-facing semantic capability index over executable evidence.
+  principles:
+    - capabilities are named by investigable concepts, not source dataset IDs
+    - Gate 1 metrics and facts remain the source of truth for execution semantics
+    - capability entries may group multiple metrics and facts
+    - optional future capabilities can be added without changing the registry schema
+    - capability presence grants discoverability, not causal authority
+
+capabilities:
+  population_level:
+    domain: demographics
+    topic: population
+    summary: Investigate registered population size and household counts across supported places and periods.
+    question_patterns:
+      - population size
+      - population change
+      - geographic population comparison
+      - household count
+    evidence:
+      metrics: [total_population, households]
+    dimensions:
+      time: inherit_from_fact
+      geography: inherit_from_fact
+    limitations:
+      - registered population is not daytime population
+      - population change alone does not identify its cause
+
+  age_structure:
+    domain: demographics
+    topic: population
+    summary: Investigate how registered population is distributed across supported age groups.
+    question_patterns:
+      - age structure
+      - child population share
+      - working-age population share
+      - aging population share
+      - age-group population change
+    evidence:
+      metrics: [age_group_population, age_group_share, child_share, working_age_share, aging_share]
+    dimensions:
+      time: inherit_from_fact
+      geography: inherit_from_fact
+      age: controlled_age_range
+    limitations:
+      - age structure does not by itself explain why a place changed
+
+  aging_change:
+    domain: demographics
+    topic: population
+    summary: Compare the change in aging share between compatible periods and places.
+    question_patterns:
+      - aging speed
+      - places aging faster or slower
+      - change in aging share
+    evidence:
+      metrics: [aging_speed]
+    dimensions:
+      time: start_and_end_period
+      geography: inherit_from_fact
+    limitations:
+      - aging speed is a percentage-point change, not a causal explanation
+
+  marital_status:
+    domain: demographics
+    topic: marriage
+    summary: Investigate the stock of residents by marital status and supported demographic slices.
+    question_patterns:
+      - marital-status composition
+      - unmarried share
+      - partnered share
+      - divorced population share
+    evidence:
+      metrics: [marital_population, marital_status_share, unmarried_share, partnered_share, divorced_stock_share]
+    dimensions:
+      time: inherit_from_fact
+      geography: inherit_from_fact
+      sex: fact_supported
+      age_band: fact_supported
+      education: fact_supported
+      marital_status: fact_supported
+    limitations:
+      - marital status is a stock, not marriage or divorce incidence
+      - divorced stock share is not divorce risk
+
+  marriage_activity:
+    domain: demographics
+    topic: marriage
+    summary: Investigate annual marriage activity measured as persons marrying, with supported category profiles.
+    question_patterns:
+      - marriage activity
+      - composition of marriage persons
+      - same-sex marriage-person share
+    evidence:
+      metrics: [marriage_person_count, marriage_person_share, same_sex_marriage_person_share]
+    dimensions:
+      time: inherit_from_fact
+      geography: inherit_from_fact
+      marriage_type: fact_supported
+      sex: fact_supported
+      nationality: fact_supported
+      education: fact_supported
+      age_band: fact_supported
+    limitations:
+      - marriage counts are persons, not couples
+      - marriage-person share is not a population marriage rate
+
+  migration_flow:
+    domain: demographics
+    topic: migration
+    summary: Investigate registered origin-to-destination migration flows and destination concentration.
+    question_patterns:
+      - where registered migrants from an origin go
+      - migration-flow change
+      - destination concentration
+      - destination comparison
+    evidence:
+      metrics: [migration_flow_count, migration_destination_share]
+    dimensions:
+      time: inherit_from_fact
+      origin_geography: inherit_from_fact
+      destination_geography: inherit_from_fact
+      sex: fact_supported
+    limitations:
+      - registered migration is not necessarily physical residential movement
+      - migration data does not support age-specific migration
+      - destination geography cannot exceed the source fact resolution
+
+  fertility_level:
+    domain: demographics
+    topic: fertility
+    summary: Investigate official total and general fertility rates across supported places and years.
+    question_patterns:
+      - fertility level
+      - geographic fertility differences
+      - fertility-rate change
+    evidence:
+      metrics: [total_fertility_rate, general_fertility_rate]
+    dimensions:
+      time: inherit_from_fact
+      geography: inherit_from_fact
+    limitations:
+      - fertility rates are non-additive across geography
+      - total fertility rate is displayed as births per woman
+      - general fertility rate is displayed per thousand
+      - fertility differences do not establish causal explanations
+
+  fertility_age_structure:
+    domain: demographics
+    topic: fertility
+    summary: Investigate the distribution of age-specific fertility rates across supported maternal age bands.
+    question_patterns:
+      - fertility timing
+      - maternal-age fertility profile
+      - geographic differences in fertility age structure
+    evidence:
+      metrics: [age_specific_fertility_rate]
+    dimensions:
+      time: inherit_from_fact
+      geography: inherit_from_fact
+      age_band: metric_controlled
+    limitations:
+      - age-specific fertility rates are five-year bands, not single-age rates
+      - age-band rates must not be summed as an ordinary additive metric
+      - fertility age structure does not establish preference or biological fertility
