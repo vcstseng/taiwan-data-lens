@@ -169,7 +169,14 @@ metrics:
     status: normal
     display_enabled: true
     parameters:
-      marital_status: controlled_category
+      marital_status:
+        - 未婚
+        - 有偶_不同性別
+        - 有偶_相同性別
+        - 離婚_不同性別
+        - 離婚_相同性別
+        - 喪偶_不同性別
+        - 喪偶_相同性別
       sex: optional
       age_band: optional
       education: optional
@@ -193,7 +200,14 @@ metrics:
     display_enabled: true
     change_unit: percentage_point
     parameters:
-      marital_status: controlled_category
+      marital_status:
+        - 未婚
+        - 有偶_不同性別
+        - 有偶_相同性別
+        - 離婚_不同性別
+        - 離婚_相同性別
+        - 喪偶_不同性別
+        - 喪偶_相同性別
     formula: matching marital population / total population under same geography,
       year, sex, age and education filters
     claims:
