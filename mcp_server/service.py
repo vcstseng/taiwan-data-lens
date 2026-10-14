@@ -74,6 +74,8 @@ class LensService:
         plan = {"operation": "snapshot", "metric": metric, "period": period, "scope": {"geography": geo["geography"], "geography_level": geo["geography_level"]}}
         if parameters is not None:
             plan["parameters"] = parameters
+            if metric == "marital_status_share" and "marital_status" in parameters:
+                plan["filters"] = {"marital_status": parameters["marital_status"]}
         result = self.explore_data(plan)
         if result.get("status") == "OK" and not (result.get("observation") or {}).get("results"):
             return {"status": "NO_DATA", "metric": metric, "geography": geo["geography"], "period": period, "observation": result.get("observation")}
