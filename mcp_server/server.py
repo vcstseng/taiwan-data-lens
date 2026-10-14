@@ -47,6 +47,20 @@ def explore_data(plan: dict) -> dict:
     return service.explore_data(plan)
 
 
+@mcp.tool()
+def get_snapshot(metric: str, geography: str, period: str = "latest", parameters: dict | None = None) -> dict:
+    """Get one geographic metric snapshot without constructing a semantic plan.
+
+    Use canonical metric IDs from discover_data. Geography accepts supported
+    Taiwan county/district names, including 台/臺 aliases. period defaults to
+    the latest available period for the source fact; an explicit period must
+    use ROC year (YYY) or month (YYYMM), depending on the metric.
+    Some metrics require parameters. Unsupported metric/geography combinations
+    return BLOCK. NO_DATA is not zero. Do not invent missing observations.
+    """
+    return service.get_snapshot(metric, geography, period, parameters)
+
+
 if __name__ == "__main__":
     try:
         mcp.run(transport="stdio")

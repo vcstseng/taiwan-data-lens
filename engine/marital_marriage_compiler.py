@@ -31,9 +31,12 @@ class MaritalMarriageCompiler:
         params=["{marital_path}",y]; where=["year = ?"]
         if p["operation"]=="compare":
             gs=s["geographies"]; where.append("site_id IN ("+",".join("?"*len(gs))+")"); params+=gs
-        elif s.get("geography_level") in {"country","county"}:
-            pass  # explicit rollup: aggregate the full fact at the requested level
-        elif s.get("geography"): where.append("site_id = ?"); params.append(s["geography"])
+        elif s.get("geography") and s.get("geography_level") == "county":
+            where.append("site_id LIKE ?"); params.append(s["geography"] + "%")
+        elif s.get("geography"):
+            where.append("site_id = ?"); params.append(s["geography"])
+        elif s.get("geography_level") in {"country", "county"}:
+            pass  # unscoped rollup across the full fact
         else: where.append("site_id LIKE ?"); params.append(s["parent_geography"]+"%")
         for k,col in [("sex","sex"),("age_band","age_band"),("education","education")]:
             if f.get(k): where.append(f"{col} = ?"); params.append(f[k])
@@ -66,9 +69,12 @@ class MaritalMarriageCompiler:
         params=["{marriage_path}",y]; where=["year = ?"]
         if p["operation"]=="compare":
             gs=s["geographies"]; where.append("site_id IN ("+",".join("?"*len(gs))+")"); params+=gs
-        elif s.get("geography_level") in {"country","county"}:
-            pass  # explicit rollup: aggregate the full fact at the requested level
-        elif s.get("geography"): where.append("site_id = ?"); params.append(s["geography"])
+        elif s.get("geography") and s.get("geography_level") == "county":
+            where.append("site_id LIKE ?"); params.append(s["geography"] + "%")
+        elif s.get("geography"):
+            where.append("site_id = ?"); params.append(s["geography"])
+        elif s.get("geography_level") in {"country", "county"}:
+            pass  # unscoped rollup across the full fact
         else: where.append("site_id LIKE ?"); params.append(s["parent_geography"]+"%")
         for k,col in [("sex","sex"),("age_band","age_band"),("education","education"),("nationality","nationality")]:
             if f.get(k): where.append(f"{col} = ?"); params.append(f[k])

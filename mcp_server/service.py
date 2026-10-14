@@ -51,6 +51,34 @@ class LensService:
             self._engine = UnifiedDeterministicEngine(root=self.root)
         return self._engine.execute(plan)
 
+    def get_snapshot(self, metric, geography, period="latest", parameters=None):
+        from mcp_server.query_resolver import QueryResolver
+        resolver = QueryResolver(root=self.root)
+        contract = resolver.metric_contract(metric)
+        if contract["status"] != "OK":
+            return contract
+        if "snapshot" not in contract["allowed_operations"]:
+            return {"status": "BLOCK", "codes": ["SNAPSHOT_NOT_SUPPORTED"], "metric": metric}
+        if contract["source_fact"] not in {"population_summary", "population_age", "marital_population", "marriage_activity"}:
+            return {"status": "BLOCK", "codes": ["SNAPSHOT_GEOGRAPHY_NOT_IMPLEMENTED"], "metric": metric}
+        geo = resolver.resolve_geography(geography)
+        if geo["status"] != "OK":
+            return geo
+        if period == "latest":
+            latest = resolver.latest_period(metric, geo["geography"])
+            if latest["status"] != "OK":
+                return latest
+            period = latest["period"]
+        if parameters is not None and not isinstance(parameters, dict):
+            return {"status": "BLOCK", "codes": ["INVALID_PARAMETERS"]}
+        plan = {"operation": "snapshot", "metric": metric, "period": period, "scope": {"geography": geo["geography"], "geography_level": geo["geography_level"]}}
+        if parameters is not None:
+            plan["parameters"] = parameters
+        result = self.explore_data(plan)
+        if result.get("status") == "OK" and not (result.get("observation") or {}).get("results"):
+            return {"status": "NO_DATA", "metric": metric, "geography": geo["geography"], "period": period, "observation": result.get("observation")}
+        return result
+
     def close(self):
         if self._engine is not None:
             self._engine.close()
