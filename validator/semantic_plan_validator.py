@@ -93,6 +93,8 @@ class SemanticPlanValidator:
         if illegal_params:
             return self.result("BLOCK", "UNSUPPORTED_PARAMETER", parameters=illegal_params)
 
+        if metric_name == "marital_status_share" and "marital_status" not in supplied_params:
+            return self.result("BLOCK", "MISSING_METRIC_PARAMETER", parameter="marital_status")
         if metric_name in {"age_group_population", "age_group_share"} and "age_range" not in supplied_params:
             return self.result("BLOCK", "MISSING_METRIC_PARAMETER", parameter="age_range")
         if metric_name == "age_specific_fertility_rate" and plan.get("operation") != "profile" and "age_band" not in supplied_params:
