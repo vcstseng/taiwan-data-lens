@@ -1,4 +1,7 @@
+
 """Launch: python -m mcp_server.server (local stdio MCP)."""
+
+from pathlib import Path
 
 # Preload pandas before MCP tools run. This avoids a reproducible first-query
 # initialization stall observed in the local MCP stdio integration tests.
@@ -9,8 +12,15 @@ from mcp.server.transport_security import TransportSecuritySettings
 from .service import LensService
 
 
+# Load ChatGPT-facing instructions from a separate Markdown file.
+# Resolve relative to this module so local and Railway launches behave alike.
+INSTRUCTIONS_PATH = Path(__file__).resolve().with_name("instructions.md")
+INSTRUCTIONS = INSTRUCTIONS_PATH.read_text(encoding="utf-8")
+
+
 mcp = FastMCP(
     "Taiwan Data Lens",
+    instructions=INSTRUCTIONS,
     transport_security=TransportSecuritySettings(
         enable_dns_rebinding_protection=True,
         allowed_hosts=[
@@ -21,6 +31,7 @@ mcp = FastMCP(
         ],
     ),
 )
+
 service = LensService()
 
 
@@ -48,7 +59,12 @@ def explore_data(plan: dict) -> dict:
 
 
 @mcp.tool()
-def get_snapshot(metric: str, geography: str, period: str = "latest", parameters: dict | None = None) -> dict:
+def get_snapshot(
+    metric: str,
+    geography: str,
+    period: str = "latest",
+    parameters: dict | None = None,
+) -> dict:
     """Get one geographic metric snapshot without constructing a semantic plan.
 
     Use canonical metric IDs from discover_data. Geography accepts supported
