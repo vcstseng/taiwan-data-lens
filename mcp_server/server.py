@@ -37,7 +37,7 @@ service = LensService()
 
 @mcp.tool()
 def discover_data() -> dict:
-    """Get the official Guided Tour main menu and supported Taiwan public-data capabilities. When users ask what this plugin can do, request the main menu, or want to start exploring, call this tool and display navigation.items as the A-E main menu in the returned order. Do not replace the main menu with capability topics or Grand Tour stops. No statistical query is executed."""
+    """Get the official Guided Tour main menu and supported Taiwan public-data capabilities. When users ask what this plugin can do, request the main menu, or want to start exploring, call this tool and display navigation.items as the A-C main menu in the returned order. Do not replace the main menu with capability topics or Grand Tour stops. No statistical query is executed."""
     return service.discover_data()
 
 

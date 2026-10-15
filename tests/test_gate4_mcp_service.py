@@ -35,6 +35,16 @@ class Gate4McpServiceTests(unittest.TestCase):
         self.assertEqual(result['capabilities'][0]['metrics'], ['total_population'])
         self.engine.execute.assert_not_called()
 
+    def test_discover_menu_has_only_three_entries(self):
+        result = self.service.discover_data()
+        self.assertEqual(result["status"], "OK")
+        self.assertEqual(result["navigation"]["items"], [
+            {"id": "A", "label": "探索一座城市"},
+            {"id": "B", "label": "探索一個主題"},
+            {"id": "C", "label": "資料範圍與限制"},
+        ])
+        self.engine.execute.assert_not_called()
+
     def test_story_is_entrypoint_not_observation(self):
         result = self.service.get_story('population_redistribution')
         self.assertEqual(result['evidence_status'], 'ENTRYPOINTS_ONLY')
