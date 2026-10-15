@@ -217,6 +217,8 @@ class SemanticPlanValidator:
         if any(not isinstance(p, str) or not p.isdigit() or len(p) != expected_len for p in periods):
             return self.result("BLOCK", "INVALID_PERIOD_FORMAT",
                                time_grain=time_grain)
+        if time_grain == "month" and any(not 1 <= int(p[-2:]) <= 12 for p in periods):
+            return self.result("BLOCK", "INVALID_PERIOD_FORMAT", time_grain=time_grain)
         if plan.get("start_period") and plan.get("end_period") and plan["start_period"] > plan["end_period"]:
             return self.result("BLOCK", "INVALID_PERIOD_RANGE")
 

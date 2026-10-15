@@ -48,7 +48,7 @@ def test_invalid_parameters(service):
     assert service.get_snapshot("total_population","台北市",parameters="invalid")["status"]=="BLOCK"
 
 def test_no_data(service):
-    assert service.get_snapshot("total_population","台北市",period="99999")["status"]=="NO_DATA"
+    assert service.get_snapshot("total_population","台北市",period="99912")["status"]=="NO_DATA"
 
 
 @pytest.mark.parametrize("metric,expected_year", [
