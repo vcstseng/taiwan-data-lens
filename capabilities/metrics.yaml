@@ -390,7 +390,6 @@ metrics:
     - snapshot
     - rank
     - trend
-    - change
     - compare
     - profile
     status: normal
