@@ -21,7 +21,8 @@ class MigrationQueryCompiler:
 
     @staticmethod
     def _origin(scope):
-        return (scope or {}).get("geography") or (scope or {}).get("origin_district")
+        scope = scope or {}
+        return scope.get("origin_geography") or scope.get("geography")
 
     def _where_context(self, period_sql, origin_sql, plan, include_destination=True):
         f=self._filters(plan); where=[period_sql,origin_sql]; vals=[]

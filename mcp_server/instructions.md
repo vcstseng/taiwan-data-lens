@@ -225,3 +225,29 @@ Do not end by automatically offering numbered options, another submenu, or an un
 **One menu to begin. Verified data to explore. A useful answer to finish.**
 
 Do not make users navigate to information the tools can already retrieve. Never sacrifice statistical accuracy to create a smoother or more entertaining story.
+
+### Geography level for comparisons
+
+For `compare` and `rank` queries, always set
+`scope.geography_level` explicitly when supported by the metric.
+
+- Comparing counties or cities:
+  `scope.geography_level = "county"`
+- Comparing districts or townships:
+  `scope.geography_level = "district"`
+- Nationwide population totals:
+  `scope.geography_level = "country"`
+
+Do not assume county-level aggregation happens automatically.
+
+Example — compare population across cities:
+
+{
+  "operation": "compare",
+  "metric": "total_population",
+  "period": "11508",
+  "scope": {
+    "geographies": ["臺北市", "臺中市", "臺南市"],
+    "geography_level": "county"
+  }
+}

@@ -147,6 +147,21 @@ class SemanticPlanValidator:
         if "geography" in scope and "geographies" in scope:
             return self.result("BLOCK", "CONFLICTING_GEOGRAPHY_SCOPE")
 
+        # Migration point/trend queries require a specific origin district.
+        # Reject missing origin before the query reaches the compiler.
+        if metric["source_fact"] == "migration_flow":
+            if op in {"snapshot", "rank", "profile", "trend"}:
+                origin = (
+                    scope.get("origin_geography")
+                    or scope.get("geography")
+                )
+                if not origin:
+                    return self.result(
+                        "BLOCK",
+                        "MISSING_MIGRATION_ORIGIN"
+                    )
+
+
         # Gate 2 geography-rollup amendment: only additive/recomputable metrics
         # may request country/county rollups. Rates such as fertility remain
         # at their official source geography and migration keeps its existing

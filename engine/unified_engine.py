@@ -51,8 +51,16 @@ class UnifiedDeterministicEngine:
         if route is None or route not in self.engines:
             return {"status":"BLOCK","validation":{"status":"BLOCK","codes":["NO_DETERMINISTIC_ENGINE"]},"observation":None}
         result = self.engines[route].execute(plan)
+
         if result.get("status") == "OK":
             result["engine"] = route
+
+            observation = result.get("observation") or {}
+            rows = observation.get("results")
+
+            if isinstance(rows, list) and len(rows) == 0:
+                result["status"] = "NO_DATA"
+
         return result
 
     def execute_investigation(self, investigation):
