@@ -2,6 +2,19 @@ from .fertility_compiler import FertilityCompiler
 class FertilityEngine:
     def __init__(self,con,fertility_path):
         self.con=con; self.fertility_path=str(fertility_path); self.compiler=FertilityCompiler()
+    def has_child_geographies(self, year, geography):
+        """True only if the year exists and child district rows exist."""
+        if not isinstance(geography, str) or not geography.endswith(("縣", "市")):
+            return False
+        row = self.con.execute(
+            "SELECT EXISTS ("
+            "SELECT 1 FROM read_parquet(?) "
+            "WHERE year = ? AND site_id LIKE ? AND site_id <> ?"
+            ")",
+            [self.fertility_path, int(year), geography + "%", geography],
+        ).fetchone()
+        return bool(row and row[0])
+
     def execute(self,plan):
         q=self.compiler.compile(plan)
         params=[self.fertility_path if x=="{fertility_path}" else x for x in q["params"]]

@@ -60,6 +60,15 @@ class UnifiedDeterministicEngine:
 
             if isinstance(rows, list) and len(rows) == 0:
                 result["status"] = "NO_DATA"
+                if route == "fertility" and plan.get("operation") == "snapshot":
+                    scope = plan.get("scope") or {}
+                    geography = scope.get("geography")
+                    year = plan.get("period")
+                    fertility_engine = self.engines["fertility"]
+                    if (geography and year and
+                            hasattr(fertility_engine, "has_child_geographies") and
+                            fertility_engine.has_child_geographies(year, geography)):
+                        result["codes"] = ["GEOGRAPHY_LEVEL_NOT_AVAILABLE"]
 
         return result
 
