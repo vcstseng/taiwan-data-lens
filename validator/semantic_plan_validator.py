@@ -162,11 +162,17 @@ class SemanticPlanValidator:
                     )
 
 
-        # Gate 2 geography-rollup amendment: only additive/recomputable metrics
-        # may request country/county rollups. Rates such as fertility remain
-        # at their official source geography and migration keeps its existing
-        # directional contract.
+
+        # Gate 2 geography-rollup amendment.
+        # Migration flow count is allowed only for county-level profiles.
         geo_level = scope.get("geography_level")
+
+        migration_county_profile = (
+            metric_name == "migration_flow_count"
+            and op == "profile"
+            and geo_level == "county"
+        )
+
         if geo_level in {"country", "county"}:
             rollup_metrics = {
                 "total_population", "households", "age_group_population",
@@ -177,9 +183,18 @@ class SemanticPlanValidator:
                 "marriage_person_count", "marriage_person_share",
                 "same_sex_marriage_person_share",
             }
-            if metric_name not in rollup_metrics:
-                return self.result("BLOCK", "GEOGRAPHY_ROLLUP_NOT_AUTHORIZED",
-                                   metric=metric_name, geography_level=geo_level)
+
+            if (
+                metric_name not in rollup_metrics
+                and not migration_county_profile
+            ):
+                return self.result(
+                    "BLOCK",
+                    "GEOGRAPHY_ROLLUP_NOT_AUTHORIZED",
+                    metric=metric_name,
+                    geography_level=geo_level,
+                )
+
             if geo_level == "country" and scope.get("parent_geography"):
                 return self.result("BLOCK", "COUNTRY_ROLLUP_CANNOT_HAVE_PARENT")
         elif geo_level and geo_level not in {"district", "village"}:
