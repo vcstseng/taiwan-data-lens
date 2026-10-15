@@ -18,6 +18,7 @@ class LensService:
             metrics = yaml.safe_load(f)['metrics']
         return {
             'status': 'OK',
+            'navigation': {'type': 'main_menu', 'items': [{'id': 'A', 'label': '探索一座城市'}, {'id': 'B', 'label': '探索一個主題'}, {'id': 'C', 'label': '精選數據故事'}, {'id': 'D', 'label': '隨機發現'}, {'id': 'E', 'label': '資料範圍與限制'}]},
             'capabilities': [
                 {'id': name, 'summary': spec.get('summary'),
                  'metrics': [m for m in spec.get('evidence', {}).get('metrics', [])
