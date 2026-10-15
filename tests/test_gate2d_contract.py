@@ -11,7 +11,7 @@ class T(unittest.TestCase):
   q=self.c.compile({"operation":"snapshot","metric":"partnered_share","period":"115","scope":{"geography":"臺北市內湖區"}})
   self.assertIn("有偶_不同性別",q["params"]);self.assertIn("有偶_相同性別",q["params"])
  def test_denominator_not_status_filtered(self):
-  q=self.c.compile({"operation":"snapshot","metric":"marital_status_share","period":"115","scope":{"geography":"臺北市內湖區"},"filters":{"marital_status":"未婚"}})
+  q=self.c.compile({"operation":"snapshot","metric":"marital_status_share","period":"115","scope":{"geography":"臺北市內湖區"},"parameters":{"marital_status":"未婚"}})
   self.assertNotIn("marital_status = ?",q["sql"])
  def test_marriage_count_is_persons_no_div2(self):
   q=self.c.compile({"operation":"snapshot","metric":"marriage_person_count","period":"115","scope":{"geography":"臺北市內湖區"}})

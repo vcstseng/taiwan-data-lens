@@ -30,7 +30,13 @@ class MaritalMarriageCompiler:
         s,y=self._scope(p); f=self._filters(p,{"sex","age_band","education","marital_status"})
         params=["{marital_path}",y]; where=["year = ?"]
         if p["operation"]=="compare":
-            gs=s["geographies"]; where.append("site_id IN ("+",".join("?"*len(gs))+")"); params+=gs
+            gs=s["geographies"]
+            if s.get("geography_level") == "county":
+                geo_col = self._geography_expr("county")
+                where.append(geo_col + " IN (" + ",".join("?"*len(gs)) + ")")
+            else:
+                where.append("site_id IN (" + ",".join("?"*len(gs)) + ")")
+            params += gs
         elif s.get("geography") and s.get("geography_level") == "county":
             where.append("site_id LIKE ?"); params.append(s["geography"] + "%")
         elif s.get("geography"):
@@ -51,8 +57,12 @@ class MaritalMarriageCompiler:
               "divorced_stock_share":["離婚_不同性別","離婚_相同性別"],
             }.get(metric)
             if metric=="marital_status_share":
-                if not f.get("marital_status"): raise ValueError("marital_status_share requires marital_status")
-                status=[f["marital_status"]]
+                requested_status = (p.get("parameters") or {}).get("marital_status")
+                if not requested_status:
+                    raise ValueError("marital_status_share requires parameters.marital_status")
+                if f.get("marital_status") and f["marital_status"] != requested_status:
+                    raise ValueError("conflicting marital_status parameter and filter")
+                status=[requested_status]
             qs=",".join("?"*len(status))
             # CASE placeholders occur before read_parquet(?) in SQL text.
             params=status+params
@@ -68,7 +78,13 @@ class MaritalMarriageCompiler:
         s,y=self._scope(p); f=self._filters(p,{"sex","age_band","education","nationality","marriage_type"})
         params=["{marriage_path}",y]; where=["year = ?"]
         if p["operation"]=="compare":
-            gs=s["geographies"]; where.append("site_id IN ("+",".join("?"*len(gs))+")"); params+=gs
+            gs=s["geographies"]
+            if s.get("geography_level") == "county":
+                geo_col = self._geography_expr("county")
+                where.append(geo_col + " IN (" + ",".join("?"*len(gs)) + ")")
+            else:
+                where.append("site_id IN (" + ",".join("?"*len(gs)) + ")")
+            params += gs
         elif s.get("geography") and s.get("geography_level") == "county":
             where.append("site_id LIKE ?"); params.append(s["geography"] + "%")
         elif s.get("geography"):
